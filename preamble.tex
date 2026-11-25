@@ -1,0 +1,34 @@
+% preamble.tex: the theme, packages and shared macros of the whole deck. SHARED FILE: only Renzhi edits it.
+% Need a package or a macro? Put it at the top of your own section file (see README), or ask Renzhi to add it here.
+
+\usetheme[progressbar=frametitle, numbering=fraction, block=fill]{metropolis}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{graphicx}
+\usepackage{booktabs}            % tables: \toprule \midrule \bottomrule
+\usepackage{amsmath, amssymb}
+\usepackage{siunitx}             % \SI{64}{dB}, \num{16384}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning, shapes}
+
+\graphicspath{{figures/}}        % \includegraphics{taman/curve.pdf} finds figures/taman/curve.pdf
+
+% USC colours
+\definecolor{usccardinal}{HTML}{990000}
+\definecolor{uscgold}{HTML}{FFCC00}
+\definecolor{uscgray}{HTML}{4D4D4D}
+\setbeamercolor{frametitle}{bg=usccardinal, fg=white}
+\setbeamercolor{progress bar}{fg=uscgold, bg=usccardinal!30}
+\setbeamercolor{title separator}{fg=uscgold}
+\setbeamercolor{alerted text}{fg=usccardinal}
+\setbeamercolor{block title}{bg=usccardinal!15, fg=black}
+\setbeamercolor{block body}{bg=usccardinal!5}
+
+% Shared macros (everyone may use them; only Renzhi changes them)
+\newcommand{\todo}[1]{{\color{orange}\textbf{TODO:} #1}}                 % visible reminder; remove before the talk
+\newcommand{\placeholder}[2][0.8\linewidth]{%                             % a grey box where a figure will go
+  \fbox{\parbox[c][0.45\textheight][c]{#1}{\centering\color{gray}\small #2}}}
+\newcommand{\rulename}{uncertainty rule}                                  % the baseline everyone compares against
+\newcommand{\passfail}{pass/fail accuracy}
+\newcommand{\prederr}{prediction error}

@@ -1,0 +1,59 @@
+name: build
+# Compiles the deck. On a pull request it only checks that main.tex and every solo_<name>.tex compile. On main it also
+# commits the compiled main.pdf, so the latest deck is always viewable on GitHub (nobody commits PDFs by hand).
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["main.pdf"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LaTeX
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            texlive-latex-base texlive-latex-recommended texlive-latex-extra texlive-pictures \
+            texlive-fonts-recommended texlive-science lmodern latexmk
+
+      - name: Compile every part on its own, then the whole deck
+        run: |
+          for f in solo_*.tex main.tex; do
+            latexmk -pdf -interaction=nonstopmode -halt-on-error "$f" > /dev/null \
+              || { echo "::error::$f does not compile"; tail -40 "${f%.tex}.log"; exit 1; }
+          done
+
+      - name: Keep the PDF as a download
+        uses: actions/upload-artifact@v4
+        with:
+          name: deck
+          path: main.pdf
+
+      - name: Commit main.pdf
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          cp main.pdf "$RUNNER_TEMP/main.pdf"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            cp "$RUNNER_TEMP/main.pdf" main.pdf
+            git add main.pdf
+            git diff --cached --quiet && { echo "main.pdf unchanged"; exit 0; }
+            git commit -q -m "Build main.pdf from ${GITHUB_SHA::7}"
+            git push -q origin HEAD:main && exit 0
+            sleep 5
+          done
+          exit 1
