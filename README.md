@@ -20,6 +20,9 @@ rebuilds it on every push to `main`.
 **Edit only your own section file and your own figures folder.** Since nobody else touches them, your changes never
 conflict with anyone else's.
 
+**This repo is public.** Nothing from a private process (TSMC 65 nm) goes on a slide or in `figures/`: no numbers,
+plots, device names or model details. SKY130 and GF180 results are fine.
+
 Need something in a shared file, such as a package, a change to the theme or a new shared macro? Ask Renzhi. For a
 macro only you use, define it at the top of your own file with your name as a prefix, e.g.
 `\newcommand{\tamanBudget}{600}`.
