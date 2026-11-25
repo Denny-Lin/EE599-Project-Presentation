@@ -13,7 +13,6 @@ rebuilds it on every push to `main`.
 | `sections/taman.tex` | Taman | evolution strategies |
 | `sections/samir.tex` | Samir | PPO |
 | `sections/hungyu.tex` | Hungyu | DQN, NSGA-II, MAP-Elites |
-| `sections/zhaoyan.tex` | Zhaoyan | your part |
 | `sections/renzhi.tex` | Renzhi | comparison across methods; the LLM designer loop |
 | `figures/<name>/` | each owner | your figures |
 
