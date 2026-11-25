@@ -23,13 +23,92 @@
   \tableofcontents
 \end{frame}
 
-% The parts, in presentation order. Each \include starts on a new slide.
-\include{sections/intro}        % Renzhi: the problem, the environment, the baselines
-\include{sections/taman}        % Taman: evolution strategies
-\include{sections/samir}        % Samir: PPO
-\include{sections/hungyu}       % Hungyu: DQN, NSGA-II, MAP-Elites
-\include{sections/zhaoyan}      % Zhaoyan
-\include{sections/renzhi}       % Renzhi: comparison across methods; the LLM designer loop
-\include{sections/conclusion}   % Renzhi: conclusions
+% =====================================================================================================================
+% THE STORY AND EACH PART'S STRUCTURE (draft by Renzhi; owners shape their own slides inside this frame)
+%
+% One storyline: the problem -> one shared environment and bar -> each learner answers one question against the bar
+% -> what all of it says together -> what a region buys and how the designer uses it -> conclusions.
+% Timing: about 30 slides in all (about 1 minute a slide); adjust once the slot is known. Rough budget per part below.
+%
+% Conventions every part follows, so the deck reads as one:
+%   - Compare everything against the uncertainty rule (\rulename), at equal simulation budgets.
+%   - Two measures, always in this order and with these names: \passfail{} (iou_auc_eps_shared, higher is better) and
+%     \prederr{} (margin_auc_shared, lower is better). Give the difference from the rule with its 95% interval.
+%   - Results table: rows = your models (3 training seeds pooled) and the rule; columns = the two measures on
+%     validation (stored, and live on the 15-knob circuit) and on test. Split by budget window (50-200, 200-400,
+%     400-600) or knob group (6-8, 9-16, 17+) only where it changes the conclusion.
+%   - Plot colours, the same in every figure: rule #000000, greedy #7F7F7F, random #BFBFBF, ES #E69F00,
+%     PPO #0072B2, PPO discount 0 #56B4E9, annealed PPO #009E73, DQN #D55E00, GP straddle #CC79A7,
+%     NSGA-II #F0E442, MAP-Elites #999933.
+%   - No TSMC material anywhere (public repo).
+% =====================================================================================================================
+
+% ---------------------------------------------------------------------------------------------------------------------
+% PART 1. The problem and the setup (Renzhi, about 6 slides)
+%   1. Sizing an amplifier: spec -> topology -> sizing; every sizing costs a SPICE simulation; few sizings pass.
+%   2. One design or the region: the region says how safely a spec is met, when to stop, what to change, what carries
+%      over. Exhaustive maps do not scale (5 knobs x 7 levels = 16,807 simulations; 8 knobs = 5.8 million).
+%   3. Our approach: learn WHERE to simulate next so a Gaussian-process map gets accurate fast (a learned acquisition
+%      function). Milestone 1 scored finding one design; finding saturated, so the final project scores mapping.
+%   4. Benchmark: SKY130 + ngspice 41; 24 circuits with fully simulated pools (candidate half / scoring half);
+%      193 tasks (medium, thin, infeasible); training / validation / test split; knob ladder 8-15-22-29; GF180.
+%   5. The shared environment (diagram): 32 candidates per knob each step, budgets 50-600, per-check GP belief,
+%      one small network scores every candidate, so one policy runs on any circuit; reward `margin`.
+%   6. Measures and the bar: the two measures; one shared map estimator for every method; selection on validation
+%      with the pass/fail guard; references (uncertainty rule, greedy, random pick); validation also live.
+\include{sections/intro}
+
+% PART 2. Evolution strategies (Taman, about 4-5 slides)
+%   Question: does learning beat the rules, and how much do the extra inputs add?
+%   1. Method: separable CMA-ES over the policy's weights (at most 20k parameters), population 16, fitness = the
+%      episode return under `margin`; why ES (no gradients, robust to a noisy return).
+%   2. Training: 1M steps x 3 seeds, balanced draws (a large circuit in 20% of episodes); training curve.
+%   3. The ablation: ES seeing only the mean, the spread and the budget left. What do the other inputs add?
+%   4. Results against the rule: validation (stored + live) and test, by budget window.
+%   5. Optional comparison row: PPO with annealed candidates (Samir's settings). Takeaways.
+\include{sections/taman}
+
+% PART 3. PPO (Samir, about 5 slides)
+%   Questions: does learning beat the rules and the Bayesian method? Is finding a stand-in for mapping? Does
+%   planning ahead help?
+%   1. Method and tuning: PPO, at most 6 trials (entropy; discount 0.995 / 0.999); the chosen setting.
+%   2. Results against the rule and against GP straddle (the Bayesian baseline, cold and warm-started).
+%   3. Finding vs mapping: the Milestone 1 PPO (trained to find one design) run unchanged on the mapping tasks.
+%   4. Planning ahead: PPO with discount 0 (a learned greedy rule) against discount 0.99x.
+%   5. Takeaways.
+\include{sections/samir}
+
+% PART 4. DQN and the proposal's baselines (Hungyu, about 5 slides)
+%   Question: does learning beat the rules and the proposal's baselines?
+%   1. Method: masked double DQN; tuning (at most 6 trials); the final setting (reward x1000, discount 0.9) and why.
+%   2. Results against the rule: validation and test.
+%   3. The baselines NSGA-II and MAP-Elites: they choose from the whole candidate half by their own objectives;
+%      cost per run and the seed counts it forced (6 / 3 / 2).
+%   4. Results of the baselines against the rule and the learners, at equal simulations.
+%   5. Takeaways.
+\include{sections/hungyu}
+
+% PART 5. Zhaoyan (topic to agree; about 3-4 slides)
+\include{sections/zhaoyan}
+
+% PART 6. Putting it together: comparison, transfer, robustness, the designer (Renzhi, about 7 slides)
+%   1. Headline (test): every method against the rule on both measures; curves of the measure against simulations.
+%   2. By size: knob groups and the ladder (the rule's pass/fail falls 0.90 -> 0.60 -> 0.32 -> 0.15 from 8 to 29
+%      knobs). Where does learning help, if anywhere?
+%   3. Why learning does not beat the rule on pass/fail: the headroom check (a one-step lookahead oracle that reads
+%      the truth still loses to the rule on pass/fail; the per-pick rewards do not match pass/fail).
+%   4. Transfer: spec to spec (warm start from a nearby spec's designs); GF180 zero-shot.
+%   5. Why a region: robustness across corners and mismatch (R1-R3).
+%   6. The map for the designer: the map summary is accurate from 200 simulations; the LLM designer loop (menu of
+%      one-move variants, mapping search, phase-margin check).
+%   7. LLM results: Sonnet + menu met 3 of 4 specs beyond the catalogue with stable two-stage designs; against the
+%      menu enumeration and a random designer; the small local models.
+\include{sections/renzhi}
+
+% PART 7. Conclusions (Renzhi, about 2 slides)
+%   1. The headline answer; what we learned (the bar is strong; the reward must match the measure; regions carry
+%      information a single design does not). Limitations: nominal corner, stored pools, thin regions.
+%      Future work.  2. Questions.
+\include{sections/conclusion}
 
 \end{document}
