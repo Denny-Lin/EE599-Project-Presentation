@@ -1,0 +1,35 @@
+% main.tex: the whole deck. SHARED FILE: only Renzhi edits it (cover, contents, the sections and their order).
+% Each part lives in sections/<name>.tex and is edited only by its owner (README.md).
+%
+% Build the whole deck:      latexmk -pdf main.tex                 (or compile main.tex in Overleaf)
+% Build only your own part:  latexmk -pdf solo_<name>.tex          (cover + contents + your section; faster)
+
+\documentclass[aspectratio=169, 11pt]{beamer}
+\input{preamble}
+
+\ifdefined\onlypart\includeonly{\onlypart}\fi   % set by solo_<name>.tex
+
+\title{Learning to Map Feasible Design Spaces of Amplifier Topologies}
+\subtitle{EE 599 final project}
+\author{Hungyu Lin \and Renzhi Li \and Taman Truong \and Samir Sarieddine}
+\institute{University of Southern California}
+\date{December 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Contents}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+% The sections, in presentation order: \deckpart{file}{section title}{presenter} makes the section, its cover slide,
+% and includes the owner's file. Renaming a section or reordering the talk happens here only.
+\deckpart{sections/intro}{Problem and setup}{Renzhi Li}
+\deckpart{sections/taman}{Evolution strategies}{Taman Truong}
+\deckpart{sections/samir}{PPO}{Samir Sarieddine}
+\deckpart{sections/hungyu}{DQN, NSGA-II and MAP-Elites}{Hungyu Lin}
+\deckpart{sections/renzhi}{Comparison and the LLM designer}{Renzhi Li}
+\deckpart{sections/conclusion}{Conclusions}{Renzhi Li}
+
+\end{document}
