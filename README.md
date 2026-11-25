@@ -29,8 +29,9 @@ macro only you use, define it at the top of your own file with your name as a pr
 
 ## Writing your slides
 
-Your file starts with a `\section{...}` (rename it freely; the outline picks it up) and four placeholder frames:
-method, training setup, results, takeaways. Replace them, and add or remove frames as you like.
+`main.tex` makes the deck's cover, the contents slide and, for each section, its title and a cover slide with the
+presenter's name. Your file holds only your frames, starting with four placeholders: method, training setup, results,
+takeaways. Replace them, and add or remove frames as you like. To rename your section, ask Renzhi.
 
 - **Figures:** put them in `figures/<name>/` and write `\includegraphics[width=0.8\linewidth]{<name>/plot.pdf}`.
   Prefer PDF or PNG, each under a few MB.
@@ -47,7 +48,7 @@ You need a TeX installation with `latexmk` (TeX Live or MiKTeX), or Overleaf.
 
 | To build | Run | Output |
 |---|---|---|
-| only your part (title, outline and your slides) | `latexmk -pdf solo_<name>.tex` | `solo_<name>.pdf` |
+| only your part (cover, contents and your section) | `latexmk -pdf solo_<name>.tex` | `solo_<name>.pdf` |
 | the whole deck | `latexmk -pdf main.tex` | `main.pdf` |
 | clean up | `latexmk -C` | |
 

@@ -1,7 +1,7 @@
 % preamble.tex: the theme, packages and shared macros of the whole deck. SHARED FILE: only Renzhi edits it.
 % Need a package or a macro? Put it at the top of your own section file (see README), or ask Renzhi to add it here.
 
-\usetheme[progressbar=frametitle, numbering=fraction, block=fill]{metropolis}
+\usetheme[progressbar=frametitle, numbering=fraction, block=fill, sectionpage=none]{metropolis}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{graphicx}
@@ -32,3 +32,22 @@
 \newcommand{\rulename}{uncertainty rule}                                  % the baseline everyone compares against
 \newcommand{\passfail}{pass/fail accuracy}
 \newcommand{\prederr}{prediction error}
+
+% \deckpart{file}{section title}{presenter}: a section, its cover slide, then the owner's file (used in main.tex).
+% In a solo build (solo_<name>.tex) the sections not being built are left out entirely, cover included.
+\makeatletter
+\newcommand{\sectioncover}[1]{%
+  \begin{frame}[plain, noframenumbering]
+    \vfill
+    {\usebeamerfont{section title}\LARGE\color{usccardinal}\insertsection\par}
+    \vspace{0.6em}{\color{uscgold}\rule{0.6\linewidth}{1.2pt}}\par\vspace{0.6em}
+    {\large\color{uscgray}#1\par}
+    \vfill
+  \end{frame}}
+\newcommand{\deckpart}[3]{%
+  \ifdefined\onlypart
+    \edef\deck@list{\onlypart}\edef\deck@file{#1}%
+    \expandafter\expandafter\expandafter\in@\expandafter\expandafter\expandafter{\expandafter\deck@file\expandafter}\expandafter{\deck@list}%
+  \else\in@true\fi
+  \ifin@\section{#2}\sectioncover{#3}\include{#1}\fi}
+\makeatother
