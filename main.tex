@@ -32,4 +32,50 @@
 \deckpart{sections/renzhi}{Comparison and the LLM designer}{Renzhi Li}
 \deckpart{sections/conclusion}{Conclusions}{Renzhi Li}
 
+% Closing slides: the whole deck only (left out of solo builds). Not in the contents.
+\ifdefined\onlypart\else
+\begin{frame}{Contributions}
+  \footnotesize
+  \begin{columns}[T, onlytextwidth]
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Hungyu Lin}
+        \begin{itemize}
+          \item DQN: tuning, training, validation, test
+          \item Baselines: NSGA-II, MAP-Elites
+          \item Evaluation metrics
+        \end{itemize}
+      \end{block}
+      \begin{block}{Renzhi Li}
+        \begin{itemize}
+          \item Benchmark: circuits, pools, task sets
+          \item Shared environment, evaluation harness, references
+          \item Transfer, GF180 and robustness studies
+          \item Map summary and the LLM designer loop; integration and report
+        \end{itemize}
+      \end{block}
+    \end{column}
+    \begin{column}{0.48\textwidth}
+      \begin{block}{Taman Truong}
+        \begin{itemize}
+          \item Evolution strategy: training, validation, test
+          \item Its input ablation (mean, spread and budget only)
+          \item PPO with annealed candidates
+        \end{itemize}
+      \end{block}
+      \begin{block}{Samir Sarieddine}
+        \begin{itemize}
+          \item PPO: tuning, training, validation, test
+          \item Discount-0 ablation; Milestone 1 PPO on the mapping tasks
+          \item Baseline: GP straddle
+        \end{itemize}
+      \end{block}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}[standout]
+  Questions?
+\end{frame}
+\fi
+
 \end{document}
